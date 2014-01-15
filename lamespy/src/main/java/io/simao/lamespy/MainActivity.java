@@ -6,7 +6,6 @@ import android.content.*;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.text.InputType;
 import android.util.Log;
 import android.view.Menu;
@@ -14,13 +13,15 @@ import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.Toast;
 import fj.data.Option;
+import io.simao.lamespy.db.DatabaseHelper;
+import io.simao.lamespy.db.Location;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
 
 public class MainActivity extends Activity implements MainFragment.MainFragmentEventsListener {
+    private static final String TAG = MainActivity.class.getName();
 
     protected WifiManager mWifiManager;
     protected MainFragment mainFragment;
@@ -49,8 +50,7 @@ public class MainActivity extends Activity implements MainFragment.MainFragmentE
                     .commit();
         }
 
-        savedLocationsStore = new SavedLocationsStore(getSharedPreferences(getString(R.string.preference_file_key),
-                Context.MODE_PRIVATE));
+        savedLocationsStore = new SavedLocationsStore(new DatabaseHelper(this));
 
         mWifiManager = (WifiManager)getSystemService(Context.WIFI_SERVICE);
 
@@ -92,7 +92,7 @@ public class MainActivity extends Activity implements MainFragment.MainFragmentE
     public void scanButtonClicked() {
         mWifiManager.startScan();
 
-        Log.d(MainActivity.class.toString(), "Saved locations => " + savedLocationsStore.getSavedLocations());
+        Log.d(TAG, "Saved locations => " + savedLocationsStore.getSavedLocations());
     }
 
     @Override
@@ -107,7 +107,6 @@ public class MainActivity extends Activity implements MainFragment.MainFragmentE
         builder.setPositiveButton("Save", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                // TODO: Check if lastResult has something
                 String name = input.getText().toString();
                 savedLocationsStore.saveLocation(name, lastResult);
 
