@@ -15,6 +15,7 @@ import android.widget.Toast;
 import fj.data.Option;
 import io.simao.lamespy.db.DatabaseHelper;
 import io.simao.lamespy.db.Location;
+import io.simao.lamespy.db.LocationDumpActivity;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -28,6 +29,7 @@ public class MainActivity extends Activity implements MainFragment.MainFragmentE
     protected SavedLocationsStore savedLocationsStore;
     protected List<ScanResult> lastResult = new LinkedList<ScanResult>();
     protected LocationMatcher locationMatcher = new LocationMatcher();
+    protected DatabaseHelper mDatabaseHelper;
 
     private BroadcastReceiver mWifiScanReceiver = new BroadcastReceiver() {
         @Override
@@ -50,11 +52,17 @@ public class MainActivity extends Activity implements MainFragment.MainFragmentE
                     .commit();
         }
 
-        savedLocationsStore = new SavedLocationsStore(new DatabaseHelper(this));
+        mDatabaseHelper = new DatabaseHelper(this);
+        savedLocationsStore = new SavedLocationsStore(mDatabaseHelper);
 
         mWifiManager = (WifiManager)getSystemService(Context.WIFI_SERVICE);
-
         registerReceiver(mWifiScanReceiver, new IntentFilter(WifiScanReceiver.NEW_SCAN_INTENT));
+
+        setupScanAlarm();
+    }
+
+    private void setupScanAlarm() {
+        new ScanAlarmListener().setupAlarm(this);
     }
 
     @Override
@@ -83,6 +91,12 @@ public class MainActivity extends Activity implements MainFragment.MainFragmentE
         // as you specify a parent activity in AndroidManifest.xml.
         switch (item.getItemId()) {
             case R.id.action_settings:
+                return true;
+            case R.id.action_dump_log_console:
+                return new LocationExporter(mDatabaseHelper).exportToConsole();
+            case R.id.action_show_dump:
+                Intent launchNewIntent = new Intent(this, LocationDumpActivity.class);
+                startActivity(launchNewIntent);
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -149,5 +163,4 @@ public class MainActivity extends Activity implements MainFragment.MainFragmentE
 
         mainFragment.getCurrentLocationText().setText(locationStr);
     }
-
 }

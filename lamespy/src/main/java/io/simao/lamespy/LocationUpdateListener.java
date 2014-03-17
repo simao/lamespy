@@ -20,28 +20,24 @@ import io.simao.lamespy.db.LocationEvent;
 
 // But the main activity also wants to know how to save stuff and if it's possible to
 // save stuff so it also needs the wifi scan results
+
+// Mas os resultados podem vir quando a activity nao tem  o listener de wifi e
+// depois quando abrimos o programa queremos ver e guardar resultados com o ultimo scan
 public class LocationUpdateListener extends BroadcastReceiver {
     private static final String TAG = LocationUpdateListener.class.getName();
 
     @Override
     public void onReceive(Context context, Intent intent) {
         if (intent.getAction().equals(WifiScanReceiver.NEW_SCAN_INTENT)) {
-            SavedLocationsStore store = new SavedLocationsStore(new DatabaseHelper(context));
-
-            LocationMatcher matcher = new LocationMatcher();
-
             WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
 
+            DatabaseHelper db = new DatabaseHelper(context);
+            SavedLocationsStore store = new SavedLocationsStore(db);
+            LocationMatcher matcher = new LocationMatcher();
             Option<Location> location = matcher.findCurrentFromSavedLocations(store, wifiManager.getScanResults());
 
-
             if (location.isSome()) {
-                Location l = location.some();
-                Log.i(TAG, "Location detected: " + l.getName());
-
-                DatabaseHelper db = new DatabaseHelper(context);
-
-                logEvent(db, l);
+                logEvent(db, location.some());
             } else {
                 Log.i(TAG, "Could not determine current location");
             }
@@ -49,14 +45,6 @@ public class LocationUpdateListener extends BroadcastReceiver {
     }
 
     private void logEvent(DatabaseHelper db, Location location) {
-        // TODO: Too low level for a listener, shouldnt know how to sql inset
-        SQLiteDatabase wdb = db.getWritableDatabase();
-
-        ContentValues values = new ContentValues();
-
-        values.put(LocationEvent.LOCATION_ID, location.getIdOrZero());
-        values.put(LocationEvent.TIMESTAMP, new Time().toString());
-
-        wdb.insert(LocationEvent.TABLE_NAME, null, values);
+        db.addLocationEvent(location);
     }
 }

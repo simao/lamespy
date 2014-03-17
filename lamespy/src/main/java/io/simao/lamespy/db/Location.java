@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import static fj.data.Option.none;
+
 public class Location implements Comparable<Location> {
     private static final String TAG = Location.class.getName();
 
@@ -18,9 +20,9 @@ public class Location implements Comparable<Location> {
     public static final String NAME = "name";
     public static final String NETWORKS = "networks";
 
-    private Option<Integer> id = Option.none();
+    private Option<Integer> id = none();
     private String name;
-    private Option<String> wifiNetworksStr = Option.none();
+    private Option<String> wifiNetworksStr = none();
 
     public static final String DATABASE_CREATE = "create table "
             + TABLE_NAME
@@ -29,6 +31,9 @@ public class Location implements Comparable<Location> {
             + "name text not null, "
             + "networks text not null"
             + ");";
+
+    // TODO: use Option.none
+    public static Location UNKNOWN = new Location("Unknown", new LinkedList<Network>());
 
     public Location(Option<Integer> id, String name, String wifiNetworksStr) {
         this.id = id;
@@ -124,6 +129,10 @@ public class Location implements Comparable<Location> {
             r.put("name", name);
             r.put("bssid", bssid);
             return r;
+        }
+
+        public String getName() {
+            return name;
         }
 
         public JSONObject toJSON() {

@@ -9,5 +9,10 @@
     <string name="current_location_desc">Current Location: </string>
     <string name="location_available_desc">Location Available: </string>
     <string name="update_status">Update Status</string>
+    <string name="action_dump_log_console">Dump Log</string>
+    <string name="title_activity_location_dump">Location History</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_show_dump">Show Dump</string>
+    <string name="location_event_detail_dialog_message">Location Event Detail</string>
 
 </resources>

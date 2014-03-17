@@ -11,6 +11,7 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
         android:allowBackup="true"
@@ -30,18 +31,27 @@
             </intent-filter>
         </activity>
 
-        <receiver android:name=".WifiScanReceiver">
+        <receiver android:name="io.simao.lamespy.WifiScanReceiver" >
             <intent-filter>
-                <action android:name="android.net.wifi.SCAN_RESULTS"/>
+                <action android:name="android.net.wifi.SCAN_RESULTS" />
+            </intent-filter>
+        </receiver>
+        <receiver android:name="io.simao.lamespy.LocationUpdateListener" >
+            <intent-filter>
+                <action android:name="io.simao.lamespy.new_scan" />
+            </intent-filter>
+        </receiver>
+        <receiver android:name="io.simao.lamespy.ScanAlarmListener" >
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
 
-        <receiver android:name=".LocationUpdateListener">
-            <intent-filter>
-                <action android:name="io.simao.lamespy.new_scan"/>
-            </intent-filter>
-        </receiver>
-
+        <activity
+            android:name="io.simao.lamespy.db.LocationDumpActivity"
+            android:parentActivityName="io.simao.lamespy.MainActivity"
+            android:label="@string/title_activity_location_dump" >
+        </activity>
     </application>
 
 </manifest>

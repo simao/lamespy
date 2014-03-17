@@ -35,7 +35,6 @@ public class SavedLocationsStore {
     }
 
     public Map<String, Location> getSavedLocations() {
-        List<Location> locations = db.getAllLocations();
         Map<String, Location> r = new TreeMap<String, Location>();
 
         for (Location l : db.getAllLocations()) {
