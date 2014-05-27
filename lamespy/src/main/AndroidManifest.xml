@@ -43,6 +43,7 @@
         </receiver>
         <receiver android:name="io.simao.lamespy.ScanAlarmListener" >
             <intent-filter>
+                <action android:name="io.simao.lamespy.alarm_received" />
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>

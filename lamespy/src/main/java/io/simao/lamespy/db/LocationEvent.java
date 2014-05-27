@@ -1,12 +1,17 @@
 package io.simao.lamespy.db;
 
+import android.os.Parcelable;
 import fj.data.Option;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static fj.data.Option.some;
 
 public class LocationEvent {
     private int id;
-    private int location_id;
+    private long location_id;
     private String timeStamp;
     private Option<Location> location;
 
@@ -22,18 +27,21 @@ public class LocationEvent {
             + TIMESTAMP + " timestamp text not null"
             + ");";
 
-    public LocationEvent(int id, int location_id, String timeStamp) {
+    public LocationEvent(int id, long location_id, String timeStamp) {
         this.id = id;
         this.location_id = location_id;
         this.timeStamp = timeStamp;
     }
 
+    public int getId() {
+        return id;
+    }
 
     public String getTimeStamp() {
         return timeStamp;
     }
 
-    public int getLocationId() {
+    public long getLocationId() {
         return location_id;
     }
 
@@ -41,7 +49,11 @@ public class LocationEvent {
         this.location = some(location);
     }
 
-    public Option<Location> getLocation() {
-        return this.location;
+    public Location getLocation() {
+        if (this.location.isSome()) {
+            return this.location.some();
+        } else {
+            throw new RuntimeException("getLocation called before setLocation");
+        }
     }
 }

@@ -13,16 +13,17 @@ import io.simao.lamespy.db.DatabaseHelper;
 import io.simao.lamespy.db.Location;
 import io.simao.lamespy.db.LocationEvent;
 
-// This logic is kind of duplicated in the activity
+import java.util.List;
+
+// This logic is duplicated in the activity
 // But the activity only needs to know that the location changed or that the locations is known,
 // So maybe it just needs that new intent containing the new location and doesnt need
 // the wifi results, so it doesnt need to run all this code.
 
 // But the main activity also wants to know how to save stuff and if it's possible to
 // save stuff so it also needs the wifi scan results
-
-// Mas os resultados podem vir quando a activity nao tem  o listener de wifi e
-// depois quando abrimos o programa queremos ver e guardar resultados com o ultimo scan
+//
+// But it can receive just an intent with the results and current location!
 public class LocationUpdateListener extends BroadcastReceiver {
     private static final String TAG = LocationUpdateListener.class.getName();
 
@@ -39,12 +40,26 @@ public class LocationUpdateListener extends BroadcastReceiver {
             if (location.isSome()) {
                 logEvent(db, location.some());
             } else {
-                Log.i(TAG, "Could not determine current location");
+                logEvent(db, db.getUnknownLocation());
+                Log.d(TAG, "Could not determine current location");
             }
         }
     }
 
     private void logEvent(DatabaseHelper db, Location location) {
-        db.addLocationEvent(location);
+        List<LocationEvent> lastEvents = db.getLastLocationEvents(2);
+
+        if (lastEvents.size() <= 1) {
+            db.addLocationEvent(location);
+        } else {
+            Location last = lastEvents.get(0).getLocation();
+            Location previousToLast = lastEvents.get(1).getLocation();
+
+            if (last.equals(previousToLast) && last.equals(location)) {
+                db.updateLocationEventTimestamp(lastEvents.get(0));
+            } else {
+                db.addLocationEvent(location);
+            }
+        }
     }
 }

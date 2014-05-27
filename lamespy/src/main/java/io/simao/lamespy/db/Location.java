@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import static fj.data.Option.none;
+import static fj.data.Option.some;
 
 public class Location implements Comparable<Location> {
     private static final String TAG = Location.class.getName();
@@ -19,8 +20,10 @@ public class Location implements Comparable<Location> {
     public static final String TABLE_NAME = "locations";
     public static final String NAME = "name";
     public static final String NETWORKS = "networks";
+    public static final String ID = "id";
 
-    private Option<Integer> id = none();
+
+    private Option<Long> id = none();
     private String name;
     private Option<String> wifiNetworksStr = none();
 
@@ -32,10 +35,9 @@ public class Location implements Comparable<Location> {
             + "networks text not null"
             + ");";
 
-    // TODO: use Option.none
-    public static Location UNKNOWN = new Location("Unknown", new LinkedList<Network>());
+    public static String UNKNOWN_NAME = "Unknown";
 
-    public Location(Option<Integer> id, String name, String wifiNetworksStr) {
+    public Location(Option<Long> id, String name, String wifiNetworksStr) {
         this.id = id;
         this.name = name;
         this.wifiNetworksStr = Option.fromNull(wifiNetworksStr);
@@ -44,7 +46,7 @@ public class Location implements Comparable<Location> {
     public Location(String name, List<Network> networks) {
         this.name = name;
         JSONArray a = networkListToJson(networks);
-        this.wifiNetworksStr = Option.some(a.toString());
+        this.wifiNetworksStr = some(a.toString());
     }
 
     private JSONArray networkListToJson(List<Network> networks) {
@@ -86,6 +88,10 @@ public class Location implements Comparable<Location> {
         return results;
     }
 
+    public boolean equals(Location l) {
+        return l.getIdOrZero() == this.getIdOrZero();
+    }
+
     public String getName() {
         return name;
     }
@@ -94,6 +100,10 @@ public class Location implements Comparable<Location> {
     public String toString() {
         return "location: {name: " + name + ", locations: " +
                 wifiNetworksStr.orSome("[]") + "}";
+    }
+
+    public Option<Long> getId() {
+        return id;
     }
 
     @Override
@@ -105,8 +115,8 @@ public class Location implements Comparable<Location> {
         return this.wifiNetworksStr.orSome("[]");
     }
 
-    public int getIdOrZero() {
-        return id.orSome(0);
+    public long getIdOrZero() {
+        return id.orSome(0l);
     }
 
     public static class Network {

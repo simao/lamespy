@@ -44,7 +44,7 @@ public class LocationDumpActivity extends ListActivity {
     protected void onListItemClick(ListView l, View v, int position, long id) {
         // TODO: Show dialog with event detail
         LocationEvent event = (LocationEvent) getListAdapter().getItem(position);
-        Location location = event.getLocation().orSome(Location.UNKNOWN);
+        Location location = event.getLocation();
 
         StringBuilder sb = new StringBuilder();
 

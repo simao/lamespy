@@ -36,7 +36,7 @@ public class LocationDumpArrayAdapter extends ArrayAdapter<LocationEvent> {
     }
 
     private Spanned eventToText(LocationEvent event) {
-        Location l = event.getLocation().orSome(Location.UNKNOWN);
+        Location l = event.getLocation();
 
         String html = "<strong>" + l.getName() + "</strong> at " + event.getTimeStamp();
 

@@ -24,19 +24,17 @@ public class LocationExporter {
 
     public boolean exportToConsole() {
         for (LocationEvent e : dump()) {
-            Option<Location> l = e.getLocation();
-
-            if (l.isSome()) {
-                Log.i(TAG, "Location: " + l.some().getName() + " at " + e.getTimeStamp());
-            } else {
-                Log.e(TAG, "Check in at " + e.getTimeStamp() + " in unknown location");
-            }
+            Location l = e.getLocation();
+            Log.i(TAG, "Location: " + l.getName() + " at " + e.getTimeStamp());
         }
 
         return true;
     }
 
+    // TODO: This should no longer be needed since we just keep first and last checkin?
     // remove duplicates, keeping just first and last checkin
+
+    // This should not be needed anymore since we consolidate on checkin
     public List<LocationEvent> consolidatedDump() {
         List<LocationEvent> results = new LinkedList<LocationEvent>();
         List<LocationEvent> dump = dump();

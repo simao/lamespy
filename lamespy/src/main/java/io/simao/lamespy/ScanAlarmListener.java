@@ -27,8 +27,6 @@ public class ScanAlarmListener extends BroadcastReceiver {
     }
 
     public void setupAlarm(Context c) {
-        c.registerReceiver(new ScanAlarmListener(), new IntentFilter(ScanAlarmListener.ALARM_RECEIVED_INTENT));
-
         Intent intent = new Intent();
         intent.setAction(ALARM_RECEIVED_INTENT);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(c, 0, intent,
