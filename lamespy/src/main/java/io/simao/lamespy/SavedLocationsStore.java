@@ -17,17 +17,22 @@ public class SavedLocationsStore {
         this.db = db;
     }
 
-    // TODO If location exists, update ssids on that location
     public void saveLocation(String name, List<ScanResult> currentScan) {
-        List<Location.Network> networks = new LinkedList<Location.Network>();
-
-        for(ScanResult r: currentScan) {
-            networks.add(new Location.Network(r.SSID, r.BSSID));
-        }
-
+        List<Location.Network> networks = networksFromScan(currentScan);
         Location l = new Location(name, networks);
 
         db.addLocation(l);
+    }
+
+    public void addScanToLocation(String locationName, List<ScanResult> scan) {
+        Location l = getSavedLocations().get(locationName);
+
+        if (l == null) {
+            throw new RuntimeException("Cannot edit an unexistent location");
+        } else {
+            List<Location.Network> networks = networksFromScan(scan);
+            db.updateLocation(l.extendWithNetworks(networks));
+        }
     }
 
     public List<Location> getSavedLocationsList() {
@@ -42,5 +47,19 @@ public class SavedLocationsStore {
         }
 
         return r;
+    }
+
+    public Boolean locationExists(String name) {
+        return getSavedLocations().containsKey(name);
+    }
+
+    private List<Location.Network> networksFromScan(List<ScanResult> scan) {
+        List<Location.Network> networks = new LinkedList<Location.Network>();
+
+        for(ScanResult r: scan) {
+            networks.add(new Location.Network(r.SSID, r.BSSID));
+        }
+
+        return networks;
     }
 }

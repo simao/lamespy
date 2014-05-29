@@ -24,6 +24,9 @@ import java.util.List;
 // save stuff so it also needs the wifi scan results
 //
 // But it can receive just an intent with the results and current location!
+//
+// This class has too many responsabilities, extract!
+
 public class LocationUpdateListener extends BroadcastReceiver {
     private static final String TAG = LocationUpdateListener.class.getName();
 
@@ -51,12 +54,16 @@ public class LocationUpdateListener extends BroadcastReceiver {
 
         if (lastEvents.size() <= 1) {
             db.addLocationEvent(location);
+            db.addLocationEvent(location);
         } else {
             Location last = lastEvents.get(0).getLocation();
             Location previousToLast = lastEvents.get(1).getLocation();
 
             if (last.equals(previousToLast) && last.equals(location)) {
                 db.updateLocationEventTimestamp(lastEvents.get(0));
+            } else if (!last.equals(location)) {
+                db.addLocationEvent(location);
+                db.addLocationEvent(location);
             } else {
                 db.addLocationEvent(location);
             }

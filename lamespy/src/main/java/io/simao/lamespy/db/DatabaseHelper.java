@@ -147,6 +147,36 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return id;
     }
 
+    public Option<Location> getLocationByName(String name) {
+        String sql = "SELECT l.id, l.name, l.networks FROM " + Location.TABLE_NAME +
+                " l WHERE l.name = '" + name + "' ORDER BY id ASC";
+
+        Cursor c = getReadableDatabase().rawQuery(sql, null);
+
+        try {
+            if (c.moveToFirst()) {
+                return some(buildLocation(c));
+            } else {
+                return none();
+            }
+        } finally {
+            c.close();
+        }
+    }
+
+    public void updateLocation(Location location) {
+        ContentValues cv = new ContentValues();
+        cv.put(Location.NAME, location.getName());
+        cv.put(Location.NETWORKS, location.getWifiNetworksStr());
+
+        if (location.getId().isNone()) {
+            throw new RuntimeException("Cannot update a location with id = None");
+        }
+
+        getWritableDatabase().update(Location.TABLE_NAME, cv,
+                "id="+location.getIdOrZero(), null);
+    }
+
     public void updateLocationEventTimestamp(LocationEvent locationEvent) {
         ContentValues cv = new ContentValues();
         cv.put("timestamp", getCurrentDateTime());
@@ -197,24 +227,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return UNKNOWN_LOCATION.orSome(new P1<Location>() {
             @Override
             public Location _1() {
-                String sql = "SELECT l.id, l.name, l.networks FROM " + Location.TABLE_NAME +
-                        " l WHERE l.name = '" + Location.UNKNOWN_NAME + "' ORDER BY id ASC";
+                Option<Location> existentLocation = getLocationByName(Location.UNKNOWN_NAME);
 
-                Cursor c = getReadableDatabase().rawQuery(sql, null);
-
-                try {
-                    if (c.moveToFirst()) {
-                        Location l = buildLocation(c);
-                        UNKNOWN_LOCATION = some(l);
-                        return l;
-                    } else {
-                        long id = addLocationEvent(new Location(some(0l), Location.UNKNOWN_NAME, "[]"));
-                        Location l = new Location(some(id), Location.UNKNOWN_NAME, "[]");
-                        UNKNOWN_LOCATION = some(l);
-                        return l;
-                    }
-                } finally {
-                    c.close();
+                if (existentLocation.isSome()) {
+                    UNKNOWN_LOCATION = existentLocation;
+                    return existentLocation.some();
+                } else {
+                    long id = addLocationEvent(new Location(some(0l), Location.UNKNOWN_NAME, "[]"));
+                    Location l = new Location(some(id), Location.UNKNOWN_NAME, "[]");
+                    UNKNOWN_LOCATION = some(l);
+                    return l;
                 }
             }
         });

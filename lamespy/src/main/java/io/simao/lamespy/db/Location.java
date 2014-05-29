@@ -88,6 +88,16 @@ public class Location implements Comparable<Location> {
         return results;
     }
 
+    public Location extendWithNetworks(List<Network> networks) {
+        LinkedList<Network> newNetworks = new LinkedList<Network>(networks);
+        newNetworks.addAll(getWifiNetworks());
+
+        Location l = new Location(name, newNetworks);
+        l.id = this.id;
+
+        return l;
+    }
+
     public boolean equals(Location l) {
         return l.getIdOrZero() == this.getIdOrZero();
     }

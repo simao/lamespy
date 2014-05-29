@@ -3,6 +3,7 @@ package io.simao.lamespy;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.*;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
@@ -11,6 +12,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 import fj.data.Option;
 import io.simao.lamespy.db.DatabaseHelper;
@@ -122,12 +124,7 @@ public class MainActivity extends Activity implements MainFragment.MainFragmentE
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String name = input.getText().toString();
-                savedLocationsStore.saveLocation(name, lastResult);
-
-                Toast.makeText(toastContext,
-                        "Location " + name + " added",
-                        Toast.LENGTH_SHORT)
-                        .show();
+                saveLocation(toastContext, name);
             }
         });
 
@@ -139,6 +136,48 @@ public class MainActivity extends Activity implements MainFragment.MainFragmentE
         });
 
         builder.show();
+    }
+
+    public void saveLocation(Context context, String name) {
+        final String fName = name;
+        final Context fContext = context;
+
+        if (savedLocationsStore.locationExists(name)) {
+            String msg = String.format("Location with name %s already exists.\nDo you wish to merge the existent location with the new one?", fName);
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(this)
+                    .setTitle("Location already exists")
+                    .setMessage(msg);
+
+
+            builder.setPositiveButton("Merge", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    savedLocationsStore.addScanToLocation(fName, lastResult);
+
+                    Toast.makeText(fContext,
+                            "Location " + fName + " merged",
+                            Toast.LENGTH_SHORT)
+                            .show();
+                }
+            });
+
+            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
+
+            builder.show();
+        } else {
+            savedLocationsStore.saveLocation(name, lastResult);
+
+            Toast.makeText(context,
+                    "Location " + name + " added",
+                    Toast.LENGTH_SHORT)
+                    .show();
+        }
     }
 
     @Override
