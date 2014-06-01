@@ -5,6 +5,12 @@
           android:orderInCategory="0"
           android:showAsAction="never" />
 
+    <item android:id="@+id/action_dump_log_share"
+          android:title="@string/action_dump_log_share"
+          android:orderInCategory="0"
+          android:showAsAction="never" />
+
+
     <item android:id="@+id/action_show_dump"
           android:title="@string/action_show_dump"
           android:orderInCategory="100"
@@ -14,4 +20,6 @@
           android:title="@string/action_settings"
           android:orderInCategory="200"
           android:showAsAction="never" />
+
+
 </menu>

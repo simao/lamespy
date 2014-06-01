@@ -1,16 +1,15 @@
 package io.simao.lamespy.db;
 
 import android.util.Log;
+import fj.F;
 import fj.data.Option;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
+import static fj.data.List.iterableList;
 import static fj.data.Option.none;
 import static fj.data.Option.some;
 
@@ -89,8 +88,22 @@ public class Location implements Comparable<Location> {
     }
 
     public Location extendWithNetworks(List<Network> networks) {
-        LinkedList<Network> newNetworks = new LinkedList<Network>(networks);
+        LinkedList<Network> newNetworks = new LinkedList<Network>();
         newNetworks.addAll(getWifiNetworks());
+
+        Set<String> existentBssids = new TreeSet<String>(iterableList(newNetworks).map(new F<Network, String>() {
+            @Override
+            public String f(Network network) {
+                return network.bssid;
+            }
+        }).toCollection());
+
+        for (Network n : networks) {
+            if (!existentBssids.contains(n.bssid)) {
+                newNetworks.add(n);
+                existentBssids.add(n.bssid);
+            }
+        }
 
         Location l = new Location(name, newNetworks);
         l.id = this.id;

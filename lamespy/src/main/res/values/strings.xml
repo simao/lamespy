@@ -14,4 +14,5 @@
     <string name="action_show_dump">Show Dump</string>
     <string name="location_event_detail_dialog_message">Location Event Detail</string>
     <string name="merge_locations">Location with name %s already exists.\\nDo you wish to merge the existent location with the new one?</string>
+    <string name="action_dump_log_share">Share Dump</string>
 </resources>

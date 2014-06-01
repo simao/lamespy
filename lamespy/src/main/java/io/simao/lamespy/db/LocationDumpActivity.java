@@ -49,9 +49,9 @@ public class LocationDumpActivity extends ListActivity {
         StringBuilder sb = new StringBuilder();
 
         sb.append("<strong>");
-        sb.append(location.getName()).append("</strong></br>");
+        sb.append(event.getTimeStamp()).append("<br/>");
         sb.append(location.getWifiNetworks().size());
-        sb.append(" networks available: <br/>");
+        sb.append(" networks available</strong><br/><br/>");
 
         for (Location.Network n : location.getWifiNetworks()) {
             sb.append("- ").append(n.getName())
@@ -63,7 +63,7 @@ public class LocationDumpActivity extends ListActivity {
         Spanned html = Html.fromHtml(sb.toString());
 
         builder.setMessage(html)
-               .setTitle(event.getTimeStamp())
+               .setTitle(location.getName())
                .show();
     }
 

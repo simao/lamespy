@@ -41,10 +41,6 @@ public class LocationEvent {
         return timeStamp;
     }
 
-    public long getLocationId() {
-        return location_id;
-    }
-
     public void setLocation(Location location) {
         this.location = some(location);
     }

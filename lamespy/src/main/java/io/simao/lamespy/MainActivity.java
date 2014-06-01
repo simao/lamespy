@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.*;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
@@ -18,7 +19,11 @@ import fj.data.Option;
 import io.simao.lamespy.db.DatabaseHelper;
 import io.simao.lamespy.db.Location;
 import io.simao.lamespy.db.LocationDumpActivity;
+import org.json.JSONException;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.URI;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -96,12 +101,51 @@ public class MainActivity extends Activity implements MainFragment.MainFragmentE
                 return true;
             case R.id.action_dump_log_console:
                 return new LocationExporter(mDatabaseHelper).exportToConsole();
+            case R.id.action_dump_log_share:
+                return shareJsonDump();
             case R.id.action_show_dump:
                 Intent launchNewIntent = new Intent(this, LocationDumpActivity.class);
                 startActivity(launchNewIntent);
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private boolean shareJsonDump() {
+        LocationExporter exporter = new LocationExporter(mDatabaseHelper);
+
+        File outputDir = getCacheDir();
+        File outputFile = null;
+        try {
+            outputFile = File.createTempFile("lamespy-", ".json", outputDir);
+            exporter.writeJsonToTmpFile(outputFile);
+        } catch (IOException e) {
+            Log.e(TAG, "Could not export", e);
+            e.printStackTrace();
+        } catch (JSONException e) {
+            Log.e(TAG, "Could not export", e);
+            e.printStackTrace();
+        }
+
+        Intent sendIntent = new Intent();
+        sendIntent.setAction(Intent.ACTION_SEND);
+        sendIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(outputFile));
+        sendIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        sendIntent.setType("text/plain");
+        startActivity(sendIntent);
+
+//        Intent sendIntent = new Intent();
+//        sendIntent.setAction(Intent.ACTION_SEND);
+//        try {
+//            // TODO What happens if its too big?j
+//            sendIntent.putExtra(Intent.EXTRA_TEXT, exporter.jsonDump().toString(4));
+//        } catch (JSONException e) {
+//            sendIntent.putExtra(Intent.EXTRA_TEXT, "[]");
+//            e.printStackTrace();
+//        }
+//        sendIntent.setType("text/plain");
+//        startActivity(sendIntent);
+        return true;
     }
 
     @Override
@@ -111,7 +155,6 @@ public class MainActivity extends Activity implements MainFragment.MainFragmentE
         Log.d(TAG, "Saved locations => " + savedLocationsStore.getSavedLocations());
     }
 
-    @Override
     public void addLocationClicked() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Add location: Name");
