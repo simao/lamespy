@@ -36,7 +36,7 @@ public class LocationExporter {
         return true;
     }
 
-    public void writeJsonToTmpFile(File file) throws JSONException, IOException {
+    public void writeJsonToFile(File file) throws JSONException, IOException {
         BufferedWriter writer = new BufferedWriter(new FileWriter(file));
         writer.write(jsonDump().toString(4));
         writer.close();

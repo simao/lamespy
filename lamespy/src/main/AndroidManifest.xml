@@ -4,10 +4,6 @@
     android:versionCode="1"
     android:versionName="1.0" >
 
-    <uses-sdk
-        android:minSdkVersion="14"
-        android:targetSdkVersion="18" />
-
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
@@ -19,7 +15,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="io.simao.lamespy.MainActivity"
+            android:name=".activity.MainActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -48,9 +44,20 @@
             </intent-filter>
         </receiver>
 
+        <provider
+                android:name="android.support.v4.content.FileProvider"
+                android:authorities="io.simao.lamespy.fileprovider"
+                android:exported="false"
+                android:grantUriPermissions="true">
+
+            <meta-data
+                    android:name="android.support.FILE_PROVIDER_PATHS"
+                    android:resource="@xml/file_paths" />
+        </provider>
+
         <activity
             android:name="io.simao.lamespy.db.LocationDumpActivity"
-            android:parentActivityName="io.simao.lamespy.MainActivity"
+            android:parentActivityName=".activity.MainActivity"
             android:label="@string/title_activity_location_dump" >
         </activity>
     </application>

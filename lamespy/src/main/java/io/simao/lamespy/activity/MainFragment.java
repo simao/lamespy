@@ -1,4 +1,4 @@
-package io.simao.lamespy;
+package io.simao.lamespy.activity;
 
 import android.app.Activity;
 import android.app.Fragment;
@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import io.simao.lamespy.R;
 
 public class MainFragment extends Fragment {
     protected View rootView;

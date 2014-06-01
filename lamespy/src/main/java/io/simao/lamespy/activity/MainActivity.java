@@ -1,10 +1,8 @@
-package io.simao.lamespy;
+package io.simao.lamespy.activity;
 
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.*;
-import android.database.sqlite.SQLiteDatabase;
-import android.net.Uri;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
@@ -13,17 +11,15 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 import fj.data.Option;
+import io.simao.lamespy.*;
 import io.simao.lamespy.db.DatabaseHelper;
 import io.simao.lamespy.db.Location;
 import io.simao.lamespy.db.LocationDumpActivity;
 import org.json.JSONException;
 
-import java.io.File;
 import java.io.IOException;
-import java.net.URI;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -111,14 +107,11 @@ public class MainActivity extends Activity implements MainFragment.MainFragmentE
         return super.onOptionsItemSelected(item);
     }
 
-    private boolean shareJsonDump() {
-        LocationExporter exporter = new LocationExporter(mDatabaseHelper);
 
-        File outputDir = getCacheDir();
-        File outputFile = null;
+    private boolean shareJsonDump() {
         try {
-            outputFile = File.createTempFile("lamespy-", ".json", outputDir);
-            exporter.writeJsonToTmpFile(outputFile);
+            DumpFileExporter dumpFileExporter = new DumpFileExporter(this, mDatabaseHelper);
+            dumpFileExporter.sendDumpFileIntent();
         } catch (IOException e) {
             Log.e(TAG, "Could not export", e);
             e.printStackTrace();
@@ -127,24 +120,6 @@ public class MainActivity extends Activity implements MainFragment.MainFragmentE
             e.printStackTrace();
         }
 
-        Intent sendIntent = new Intent();
-        sendIntent.setAction(Intent.ACTION_SEND);
-        sendIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(outputFile));
-        sendIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-        sendIntent.setType("text/plain");
-        startActivity(sendIntent);
-
-//        Intent sendIntent = new Intent();
-//        sendIntent.setAction(Intent.ACTION_SEND);
-//        try {
-//            // TODO What happens if its too big?j
-//            sendIntent.putExtra(Intent.EXTRA_TEXT, exporter.jsonDump().toString(4));
-//        } catch (JSONException e) {
-//            sendIntent.putExtra(Intent.EXTRA_TEXT, "[]");
-//            e.printStackTrace();
-//        }
-//        sendIntent.setType("text/plain");
-//        startActivity(sendIntent);
         return true;
     }
 
@@ -166,7 +141,7 @@ public class MainActivity extends Activity implements MainFragment.MainFragmentE
         builder.setPositiveButton("Save", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                String name = input.getText().toString();
+                String name = input.getText().toString().trim();
                 saveLocation(toastContext, name);
             }
         });

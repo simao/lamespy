@@ -26,6 +26,8 @@ public class WifiScanReceiver extends BroadcastReceiver {
     public void onReceive(Context c, Intent intent) {
         if (intent.getAction().equals(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION)) {
             Intent resultsIntent = new Intent();
+            // TODO Serialize the scan results and send it in this intent,
+            // then both LocationUpdateListener and MainActivity can listen on this intent only
             resultsIntent.setAction(NEW_SCAN_INTENT);
             c.sendBroadcast(resultsIntent);
         }
