@@ -4,10 +4,7 @@ import android.net.wifi.ScanResult;
 import io.simao.lamespy.db.DatabaseHelper;
 import io.simao.lamespy.db.Location;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 public class SavedLocationsStore {
 
@@ -40,7 +37,7 @@ public class SavedLocationsStore {
     }
 
     public Map<String, Location> getSavedLocations() {
-        Map<String, Location> r = new TreeMap<String, Location>();
+        Map<String, Location> r = new TreeMap<String, Location>(String.CASE_INSENSITIVE_ORDER);
 
         for (Location l : db.getAllLocations()) {
             r.put(l.getName(), l);
