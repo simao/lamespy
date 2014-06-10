@@ -13,6 +13,7 @@ import io.simao.lamespy.R;
 public class MainFragment extends Fragment {
     protected View rootView;
     protected MainFragmentEventsListener listener;
+    public static String FRAGMENT_TAG = "io.simao.lamespy.MainFragment.TAG";
 
     public MainFragment() {
     }

@@ -25,13 +25,4 @@ public class LocationMatcher {
 
         return Option.none();
     }
-
-    public Option<String> findCurrentLocationName(List<Location> savedLocations, List<ScanResult> lastScan) {
-        return findCurrentLocation(savedLocations, lastScan).map(new F<Location, String>() {
-            @Override
-            public String f(Location l) {
-                return l.getName();
-            }
-        });
-    }
 }

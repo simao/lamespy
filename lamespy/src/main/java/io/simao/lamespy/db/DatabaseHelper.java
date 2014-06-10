@@ -149,7 +149,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public Option<Location> getLocationByName(String name) {
         String sql = "SELECT l.id, l.name, l.networks FROM " + Location.TABLE_NAME +
-                " l WHERE l.name = '" + name + "' ORDER BY id ASC";
+                " l WHERE l.name = '" + name + "' ORDER BY id ASC LIMIT 1";
 
         Cursor c = getReadableDatabase().rawQuery(sql, null);
 

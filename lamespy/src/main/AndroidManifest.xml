@@ -27,14 +27,14 @@
             </intent-filter>
         </activity>
 
-        <receiver android:name="io.simao.lamespy.WifiScanReceiver" >
+        <receiver android:name=".LocationDataListener" >
             <intent-filter>
                 <action android:name="android.net.wifi.SCAN_RESULTS" />
             </intent-filter>
         </receiver>
         <receiver android:name="io.simao.lamespy.LocationUpdateListener" >
             <intent-filter>
-                <action android:name="io.simao.lamespy.new_scan" />
+                <action android:name="io.simao.lamespy.location_update" />
             </intent-filter>
         </receiver>
         <receiver android:name="io.simao.lamespy.ScanAlarmListener" >

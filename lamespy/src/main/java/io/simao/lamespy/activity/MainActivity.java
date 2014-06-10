@@ -6,12 +6,14 @@ import android.content.*;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.text.InputType;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.Toast;
+import fj.F;
 import fj.data.Option;
 import io.simao.lamespy.*;
 import io.simao.lamespy.db.DatabaseHelper;
@@ -31,17 +33,9 @@ public class MainActivity extends Activity implements MainFragment.MainFragmentE
     protected MainFragment mainFragment;
     protected SavedLocationsStore savedLocationsStore;
     protected List<ScanResult> lastResult = new LinkedList<ScanResult>();
-    protected LocationMatcher locationMatcher = new LocationMatcher();
     protected DatabaseHelper mDatabaseHelper;
 
-    private BroadcastReceiver mWifiScanReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (intent.getAction().equals(WifiScanReceiver.NEW_SCAN_INTENT)) {
-                onNewScanResults(mWifiManager.getScanResults());
-            }
-        }
-    };
+    private BroadcastReceiver mWifiScanReceiver = new LocationUpdateReceiver();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,16 +45,17 @@ public class MainActivity extends Activity implements MainFragment.MainFragmentE
         if (savedInstanceState == null) {
             mainFragment = new MainFragment();
             getFragmentManager().beginTransaction()
-                    .add(R.id.container, mainFragment)
+                    .add(R.id.container, mainFragment, MainFragment.FRAGMENT_TAG)
                     .commit();
+        } else {
+            mainFragment = (MainFragment)getFragmentManager().findFragmentByTag(MainFragment.FRAGMENT_TAG);
         }
 
         mDatabaseHelper = new DatabaseHelper(this);
         savedLocationsStore = new SavedLocationsStore(mDatabaseHelper);
-
         mWifiManager = (WifiManager)getSystemService(Context.WIFI_SERVICE);
-        registerReceiver(mWifiScanReceiver, new IntentFilter(WifiScanReceiver.NEW_SCAN_INTENT));
 
+        // TODO: This should be done in the manifest somehow
         setupScanAlarm();
     }
 
@@ -77,7 +72,7 @@ public class MainActivity extends Activity implements MainFragment.MainFragmentE
     @Override
     protected void onResume() {
         super.onResume();
-        registerReceiver(mWifiScanReceiver, new IntentFilter(WifiScanReceiver.NEW_SCAN_INTENT));
+        registerReceiver(mWifiScanReceiver, new IntentFilter(LocationDataListener.LOCATION_UPDATE));
     }
 
     @Override
@@ -202,7 +197,7 @@ public class MainActivity extends Activity implements MainFragment.MainFragmentE
     public void fragmentViewCreated() {
     }
 
-    public void onNewScanResults(List<ScanResult> results) {
+    public void onLocationUpdate(Option<Location> currentLocation, List<ScanResult> results) {
         this.lastResult = results;
 
         if (this.lastResult.size() > 0)
@@ -210,14 +205,27 @@ public class MainActivity extends Activity implements MainFragment.MainFragmentE
         else
             mainFragment.getLocationAvailableText().setText("No");
 
-        updateCurrentLocation(results);
+        updateCurrentLocation(currentLocation);
     }
 
-    public void updateCurrentLocation(List<ScanResult> currentScan) {
-        List<Location> savedLocations = savedLocationsStore.getSavedLocationsList();
-        Option<String> locationName = locationMatcher.findCurrentLocationName(savedLocations, currentScan);
-        String locationStr = locationName.orSome("Unknown");
+    public void updateCurrentLocation(Option<Location> currentLocation) {
+        String locationStr = currentLocation
+                .orSome(mDatabaseHelper.getUnknownLocation())
+                .getName();
 
         mainFragment.getCurrentLocationText().setText(locationStr);
+    }
+
+    private class LocationUpdateReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals(LocationDataListener.LOCATION_UPDATE)) {
+                List<ScanResult> results = intent.getParcelableArrayListExtra(LocationDataListener.EXTRA_LAST_SCAN_RESULTS);
+
+                Location intentLocation = intent.getParcelableExtra(LocationDataListener.LOCATION);
+
+                onLocationUpdate(Option.fromNull(intentLocation), results);
+            }
+        }
     }
 }

@@ -1,5 +1,7 @@
 package io.simao.lamespy.db;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 import fj.F;
 import fj.data.Option;
@@ -13,7 +15,7 @@ import static fj.data.List.iterableList;
 import static fj.data.Option.none;
 import static fj.data.Option.some;
 
-public class Location implements Comparable<Location> {
+public class Location implements Comparable<Location>, Parcelable {
     private static final String TAG = Location.class.getName();
 
     public static final String TABLE_NAME = "locations";
@@ -141,6 +143,32 @@ public class Location implements Comparable<Location> {
     public long getIdOrZero() {
         return id.orSome(0l);
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(this.getIdOrZero());
+        dest.writeString(this.getName());
+        dest.writeString(this.getWifiNetworksStr());
+    }
+
+    public static final Parcelable.Creator<Location> CREATOR
+            = new Parcelable.Creator<Location>() {
+        public Location createFromParcel(Parcel in) {
+                Option<Long> id = Option.some(in.readLong());
+                String name = in.readString();
+                String wifiNetworksStr = in.readString();
+            return new Location(id, name, wifiNetworksStr);
+        }
+
+        public Location[] newArray(int size) {
+            return new Location[size];
+        }
+    };
 
     public static class Network {
         private String name;

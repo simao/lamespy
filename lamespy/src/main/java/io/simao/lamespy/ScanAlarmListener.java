@@ -24,6 +24,8 @@ public class ScanAlarmListener extends BroadcastReceiver {
         } else if (intent.getAction().equals(Intent.ACTION_BOOT_COMPLETED)) {
             setupAlarm(context);
         }
+        // TODO Maybe also ACTION_PACKAGE_REPLACED ?
+        // Is there an action for "this app was started"
     }
 
     public void setupAlarm(Context c) {

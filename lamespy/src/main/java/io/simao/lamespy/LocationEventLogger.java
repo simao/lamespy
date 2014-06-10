@@ -13,16 +13,12 @@ public class LocationEventLogger {
     private static final String TAG = LocationEventLogger.class.getName();
 
     private DatabaseHelper dbHelper;
-    private LocationMatcher locationMatcher = new LocationMatcher();
 
     public LocationEventLogger(DatabaseHelper dbHelper) {
         this.dbHelper = dbHelper;
     }
 
-    public void log(List<ScanResult> scanResults) {
-        SavedLocationsStore store = new SavedLocationsStore(dbHelper);
-        Option<Location> location = locationMatcher.findCurrentFromSavedLocations(store, scanResults);
-
+    public void log(Option<Location> location) {
         if (location.isSome()) {
             logEventToDatabase(dbHelper, location.some());
         } else {
