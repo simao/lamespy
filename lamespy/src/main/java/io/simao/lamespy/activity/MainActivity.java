@@ -73,6 +73,7 @@ public class MainActivity extends Activity implements MainFragment.MainFragmentE
     protected void onResume() {
         super.onResume();
         registerReceiver(mWifiScanReceiver, new IntentFilter(LocationDataListener.LOCATION_UPDATE));
+        forceLocationUpdate();
     }
 
     @Override
@@ -88,10 +89,6 @@ public class MainActivity extends Activity implements MainFragment.MainFragmentE
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         switch (item.getItemId()) {
-            case R.id.action_settings:
-                return true;
-            case R.id.action_dump_log_console:
-                return new LocationExporter(mDatabaseHelper).exportToConsole();
             case R.id.action_dump_log_share:
                 return shareJsonDump();
             case R.id.action_show_dump:
@@ -195,6 +192,10 @@ public class MainActivity extends Activity implements MainFragment.MainFragmentE
 
     @Override
     public void fragmentViewCreated() {
+    }
+
+    public void forceLocationUpdate() {
+        mWifiManager.startScan();
     }
 
     public void onLocationUpdate(Option<Location> currentLocation, List<ScanResult> results) {
