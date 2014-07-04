@@ -1,0 +1,156 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Lamespy by simao</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Lamespy</h1>
+        <p>Track your location using your android phone</p>
+
+        <p class="view"><a href="https://github.com/simao/lamespy">View the Project on GitHub <small>simao/lamespy</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/simao/lamespy/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/simao/lamespy/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/simao/lamespy">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h1>
+<a name="lamespy" class="anchor" href="#lamespy"><span class="octicon octicon-link"></span></a>Lamespy</h1>
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/simao/lamespy/master/lamespy_icon_180.png" alt="Lamespy icon"></p>
+
+<p>Lamespy keeps a history of where you have been without depending on a
+commercial company.</p>
+
+<h1>
+<a name="purpose" class="anchor" href="#purpose"><span class="octicon octicon-link"></span></a>Purpose</h1>
+
+<p>Lamespy keeps a history of your location without using any external
+location API besides your android Wifi antenna.</p>
+
+<p>This means that you do not depend on a commercial company to keep a
+history of the places you have been.</p>
+
+<p>You don't need to do anything, lamespy works in the background and
+checks your Wifi networks, you don't need to "check-in" or manually
+update your current location. This makes it really flawless and easy
+to use, you don't need to remember to do anything.</p>
+
+<p>Lamespy app allows you to track how much time you spend in each place you
+go in your life. For example, how many hours did you spend working
+last week? How many times did you go to the supermarket?</p>
+
+<p>Not using any location API means that you need to setup the app with the
+locations you want to track. If you don't add these locations,
+<code>lamespy</code> will not track your location on that place.</p>
+
+<h2>
+<a name="features" class="anchor" href="#features"><span class="octicon octicon-link"></span></a>Features</h2>
+
+<ul>
+<li><p>Privacy - Since you don't depend on a external API, your history is
+kept on your android.</p></li>
+<li><p>Easy Export and analyze - You can easily export your location
+history in JSON format and analyze it with other tools that you use
+every day.</p></li>
+<li><p>Automatically saves your location, no need to "check-in" anywhere to
+get badges.</p></li>
+<li><p>Easily check where you have been using your android</p></li>
+</ul><p>Nothing else.</p>
+
+<h1>
+<a name="its-probably-not-for-you" class="anchor" href="#its-probably-not-for-you"><span class="octicon octicon-link"></span></a>It's probably not for you</h1>
+
+<p>This app is probably not for you. It is a very bare bones app to track
+your history so you can analyze it later, it does not do anything
+else.</p>
+
+<h1>
+<a name="what-this-app-does" class="anchor" href="#what-this-app-does"><span class="octicon octicon-link"></span></a>What this app does</h1>
+
+<p>Tracks your location history. That's it.</p>
+
+<h1>
+<a name="what-this-app-does-not" class="anchor" href="#what-this-app-does-not"><span class="octicon octicon-link"></span></a>What this app does not</h1>
+
+<p>Everything not listed above.</p>
+
+<p>In particular, it only deals with data collection. Your data will be
+available as a JSON file and you can analyze it any way you want, but
+this app won't do that for you.</p>
+
+<h1>
+<a name="permissions-needed" class="anchor" href="#permissions-needed"><span class="octicon octicon-link"></span></a>Permissions needed</h1>
+
+<ul>
+<li><p><code>RECEIVE_BOOT_COMPLETED</code> It needs this permission so it can listen to Wifi
+events after the phone is booted.</p></li>
+<li><p><code>CHANGE_WIFI_STATE, ACCESS_NETWORK_STATE, ACCESS_WIFI_STATE</code>
+Required to get information about Wifi networks around you. Lamespy
+will also periodically trigger a Wifi scan so it can update your
+location.</p></li>
+</ul><h1>
+<a name="how-to-build" class="anchor" href="#how-to-build"><span class="octicon octicon-link"></span></a>How to build</h1>
+
+<p>Lamespy is built using gradle, so you can run:</p>
+
+<p><code>./gradlew assemble</code></p>
+
+<p>After this command runs successfully a new apk will be available in
+<code>./lamespy/build/apk/lamespy-release-unsigned.apk</code>.</p>
+
+<h1>
+<a name="how-to-install" class="anchor" href="#how-to-install"><span class="octicon octicon-link"></span></a>How to install</h1>
+
+<p>After building the apk with gradle you can upload it to your android.</p>
+
+<h1>
+<a name="missing-features" class="anchor" href="#missing-features"><span class="octicon octicon-link"></span></a>Missing features</h1>
+
+<ul>
+<li>Analyzing data. You will need to write a tool that can read JSON so
+you can analyze your data.</li>
+</ul><h1>
+<a name="install" class="anchor" href="#install"><span class="octicon octicon-link"></span></a>Install</h1>
+
+<p>Currently Lamespy is not on android market, so you need to build it
+and install it yourself.</p>
+
+<h1>
+<a name="contribute" class="anchor" href="#contribute"><span class="octicon octicon-link"></span></a>Contribute</h1>
+
+<p>There is no minimum pull request size, all PR will be considered
+regardless of size. If you want to help but don't know where to start,
+here are some ideas:</p>
+
+<ul>
+<li><p>Write tests and setup a framework</p></li>
+<li><p>Implement manually deleting events from the current history</p></li>
+<li><p>Stop tracking for X of hours</p></li>
+<li><p>UI can easily be improved</p></li>
+</ul>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/simao">simao</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+    
+  </body>
+</html>
